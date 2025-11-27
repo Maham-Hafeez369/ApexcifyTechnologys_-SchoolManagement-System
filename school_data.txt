@@ -1,0 +1,3 @@
+School Management System Initialized.
+I am learning file handling in C++.
+It's a great fun.
