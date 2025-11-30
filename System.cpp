@@ -49,6 +49,10 @@ void login()
             cout << "Invalid Password." << endl;
         }
     }
+    else
+    {
+        cout << "User does not exist. Please register first." << endl;
+    }
 }
 
 void registerUser()
@@ -69,14 +73,57 @@ void registerUser()
     cin >> password;
 
     ofstream userFile(name + ".txt");
-    userFile << name << endl;
     userFile << password << endl;
     userFile.close();
 
     cout << "Registration Successful!" << endl;
 }
+
+void exitSystem()
+{
+    cout << "Thank you for using Apexcify Technology's School Management System. Goodbye!" << endl;
+}
+void displayMenu()
+{
+    cout << "1. Login" << endl;
+    cout << "2. Register" << endl;
+    cout << "3. Exit" << endl;
+}
+void handleUserChoice(int choice)
+{
+    switch (choice)
+    {
+    case 1:
+        login();
+        break;
+    case 2:
+        registerUser();
+        break;
+    case 3:
+        exitSystem();
+        break;
+    default:
+        cout << "Invalid choice. Please try again." << endl;
+    }
+}
+void runSystem()
+{
+    int choice;
+    do
+    {
+        displayMenu();
+        cout << "Enter your choice: ";
+        cin >> choice;
+        handleUserChoice(choice);
+    } while (choice != 3);
+}
+
+
 int main()
 {
+    cout << "Welcome to Apexcify Technology's School Management System!" << endl;
+
+    runSystem();
 
     return 0;
 }
