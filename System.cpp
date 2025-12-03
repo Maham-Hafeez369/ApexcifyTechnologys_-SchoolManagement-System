@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ bool isValidUser(const string &name, const string &password)
     }
 
     string storedPassword;
+    getline(userFile, storedPassword); // to handle(ignore) first line that is name of user
     getline(userFile, storedPassword);
     userFile.close();
 
@@ -33,7 +35,8 @@ void login()
     // Function to handle user login
     cout << "Enter Your name." << endl;
     string name;
-    cin >> name;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // To ignore the newline character left in the buffer
+    getline(cin, name);
     // Validattion of name
     if (userExist(name))
     {
@@ -60,8 +63,8 @@ void registerUser()
     // Function to handle user registration
     cout << "Enter Your name." << endl;
     string name;
-    cin >> name;
-
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // To ignore the newline character left in the buffer
+    getline(cin, name);
     if (userExist(name))
     {
         cout << "User already exists." << endl;
@@ -71,12 +74,20 @@ void registerUser()
     cout << "Enter Your Password " << endl;
     string password;
     cin >> password;
-
     ofstream userFile(name + ".txt");
-    userFile << password << endl;
-    userFile.close();
+    if (userFile.is_open())
+    {
+        userFile << name << endl;
+        userFile << password << endl;
+        cout << "Registration Successful!" << endl;
+    }
+    else
+    {
+        cout << "Error creating user file." << endl;
+        return;
+    }
 
-    cout << "Registration Successful!" << endl;
+    userFile.close();
 }
 
 void exitSystem()
@@ -103,7 +114,7 @@ void handleUserChoice(int choice)
         exitSystem();
         break;
     default:
-        cout << "Invalid choice. Please try again." << endl;
+        cout << "Invalid choice. Please try again." << endl; // This case should not occur due to prior validation
     }
 }
 void runSystem()
@@ -114,10 +125,24 @@ void runSystem()
         displayMenu();
         cout << "Enter your choice: ";
         cin >> choice;
-        handleUserChoice(choice);
+        if (cin.fail())
+        {
+            cin.clear();                                         // clears the fail state
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // flush wrong input
+            cout << "Invalid input.\nPlease enter a number in the given range." << endl;
+            continue; // restart loop
+        }
+
+        if (choice >= 1 || choice <= 3)
+        {
+            handleUserChoice(choice);
+        }
+        else
+        {
+            cout << "Invalid choice. Please try again." << endl;
+        }
     } while (choice != 3);
 }
-
 
 int main()
 {
